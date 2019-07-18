@@ -9,17 +9,22 @@
 # WARNING! All changes made in this file will be lost!
 
 import sys
-from PySide2.QtWidgets import (QApplication, QWidget, QMainWindow)
-from PySide2 import QtCore, QtUiTools, QtGui, QtWidgets
+from PySide2.QtWidgets import (QApplication, QMainWindow)
+from PySide2 import QtCore, QtWidgets
 from PySide2.QtMultimediaWidgets import QVideoWidget
 from PySide2.QtCore import QUrl
 from PySide2.QtMultimedia import QMediaPlayer, QMediaContent
 
+def convertMillis(millis):
+    seconds=(millis/1000)%60
+    minutes=(millis/(1000*60))%60
+    hours=(millis/(1000*60*60))%24
+
+    return f'{int(hours):02}:{int(minutes):02}:{int(seconds):02}'
+
 class Form(QMainWindow):
     def __init__(self, parent=None):
         super(Form, self).__init__(parent)
-
-    # def setupUi(self, MainWindow):
         self.setObjectName("MainWindow")
         self.resize(804, 559)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
@@ -147,27 +152,29 @@ class Form(QMainWindow):
         self.pbSuivant.clicked.connect(self.suivantClicked)
         self.pbPrecedent.clicked.connect(self.precedentClicked)
         self.dVolume.valueChanged.connect(self.volumeChanged)
-        self.mediaPlayer.positionChanged.connect(self.lectureEnCours)
         self.mediaPlayer.positionChanged.connect(self.progressionChanged)
         self.sProgression.sliderMoved.connect(self.progressionDeplaced)
+
+        self.dVolume.setMaximum(100)
+
+        self.lEndTime.setText("")
+        self.lStartTime.setText("")
+        self.lPourcentVolume.setText("")
+        self.dVolume.setValue(31)
 
     def progressionDeplaced(self):
         self.mediaPlayer.setPosition(self.sProgression.value())
 
     def progressionChanged(self):
-        self.lEndTime.setText(str(self.mediaPlayer.duration() / 1000))
-        self.lStartTime.setText(str(self.mediaPlayer.position() / 1000))
+        self.lEndTime.setText(convertMillis(self.mediaPlayer.duration()))
+        self.lStartTime.setText(str(convertMillis(self.mediaPlayer.position())))
         self.sProgression.setRange(0,self.mediaPlayer.duration())
-        self.sProgression.setValue(self.mediaPlayer.position())
-
-    def lectureEnCours(self):
         self.sProgression.setValue(self.mediaPlayer.position())
 
     def lectureClicked(self):
         mediaContent = QMediaContent(QUrl.fromLocalFile("big_buck_bunny.avi"))
         self.mediaPlayer.setMedia(mediaContent)
         self.mediaPlayer.play()
-
 
     def pauseClicked(self):
         print("Pause")
