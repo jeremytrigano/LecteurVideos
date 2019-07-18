@@ -9,7 +9,7 @@
 # WARNING! All changes made in this file will be lost!
 
 import sys
-from PySide2.QtWidgets import (QApplication, QMainWindow)
+from PySide2.QtWidgets import (QApplication, QMainWindow, QFileDialog)
 from PySide2 import QtCore, QtWidgets
 from PySide2.QtMultimediaWidgets import QVideoWidget
 from PySide2.QtCore import QUrl
@@ -108,12 +108,12 @@ class Form(QMainWindow):
         self.horizontalLayout_3.setObjectName("horizontalLayout_3")
         spacerItem1 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_3.addItem(spacerItem1)
-        self.pbVolumePlus = QtWidgets.QPushButton(self.centralwidget)
-        self.pbVolumePlus.setObjectName("pbVolumePlus")
-        self.horizontalLayout_3.addWidget(self.pbVolumePlus)
-        self.pbVolumeMoins = QtWidgets.QPushButton(self.centralwidget)
-        self.pbVolumeMoins.setObjectName("pbVolumeMoins")
-        self.horizontalLayout_3.addWidget(self.pbVolumeMoins)
+        self.pbAjout = QtWidgets.QPushButton(self.centralwidget)
+        self.pbAjout.setObjectName("pbAjout")
+        self.horizontalLayout_3.addWidget(self.pbAjout)
+        self.pbSuppr = QtWidgets.QPushButton(self.centralwidget)
+        self.pbSuppr.setObjectName("pbSuppr")
+        self.horizontalLayout_3.addWidget(self.pbSuppr)
         self.verticalLayout_2.addLayout(self.horizontalLayout_3)
         self.horizontalLayout_4 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_4.setObjectName("horizontalLayout_4")
@@ -154,6 +154,8 @@ class Form(QMainWindow):
         self.dVolume.valueChanged.connect(self.volumeChange)
         self.mediaPlayer.positionChanged.connect(self.progressionChange)
         self.sProgression.sliderMoved.connect(self.progressionDeplace)
+        self.pbSuppr.clicked.connect(self.supprVid)
+        self.pbAjout.clicked.connect(self.addVid)
 
         self.dVolume.setMaximum(100)
         self.dVolume.setWrapping(False)
@@ -173,7 +175,7 @@ class Form(QMainWindow):
         self.sProgression.setValue(self.mediaPlayer.position())
 
     def lectureClic(self):
-        mediaContent = QMediaContent(QUrl.fromLocalFile("big_buck_bunny.avi"))
+        mediaContent = QMediaContent(QUrl.fromLocalFile(self.openFile[0]))
         self.mediaPlayer.setMedia(mediaContent)
         self.mediaPlayer.play()
 
@@ -207,10 +209,20 @@ class Form(QMainWindow):
         self.pbSuivant.setText(QtWidgets.QApplication.translate("MainWindow", "Suivant", None, -1))
         self.pbPrecedent.setText(QtWidgets.QApplication.translate("MainWindow", "Précédent", None, -1))
         self.label_3.setText(QtWidgets.QApplication.translate("MainWindow", "Liste de lecture :", None, -1))
-        self.pbVolumePlus.setText(QtWidgets.QApplication.translate("MainWindow", "+", None, -1))
-        self.pbVolumeMoins.setText(QtWidgets.QApplication.translate("MainWindow", "-", None, -1))
+        self.pbAjout.setText(QtWidgets.QApplication.translate("MainWindow", "+", None, -1))
+        self.pbSuppr.setText(QtWidgets.QApplication.translate("MainWindow", "-", None, -1))
         self.label_4.setText(QtWidgets.QApplication.translate("MainWindow", "Volume :", None, -1))
         self.lPourcentVolume.setText(QtWidgets.QApplication.translate("MainWindow", "$volume", None, -1))
+
+    def supprVid(self):
+        self.listWidget.removeItemWidget(self.listWidget.selectedItems())
+        listWidgetItem = self.listWidget.selectedItems()
+        for item in listWidgetItem:
+            self.listWidget.takeItem(item)
+
+    def addVid(self):
+        self.openFile = QFileDialog.getOpenFileName(self, "Open Image", ".", "Image Files (*.avi)")
+        self.listWidget.addItem(self.openFile[0])
 
 
 if __name__ == '__main__':
