@@ -146,53 +146,54 @@ class Form(QMainWindow):
         self.mediaPlayer = QMediaPlayer()
         self.mediaPlayer.setVideoOutput(self.wVideo)
 
-        self.pbLecture.clicked.connect(self.lectureClicked)
-        self.pbPause.clicked.connect(self.pauseClicked)
-        self.pbStop.clicked.connect(self.stopClicked)
-        self.pbSuivant.clicked.connect(self.suivantClicked)
-        self.pbPrecedent.clicked.connect(self.precedentClicked)
-        self.dVolume.valueChanged.connect(self.volumeChanged)
-        self.mediaPlayer.positionChanged.connect(self.progressionChanged)
-        self.sProgression.sliderMoved.connect(self.progressionDeplaced)
+        self.pbLecture.clicked.connect(self.lectureClic)
+        self.pbPause.clicked.connect(self.pauseClic)
+        self.pbStop.clicked.connect(self.stopClic)
+        self.pbSuivant.clicked.connect(self.suivantClic)
+        self.pbPrecedent.clicked.connect(self.precedentClic)
+        self.dVolume.valueChanged.connect(self.volumeChange)
+        self.mediaPlayer.positionChanged.connect(self.progressionChange)
+        self.sProgression.sliderMoved.connect(self.progressionDeplace)
 
         self.dVolume.setMaximum(100)
+        self.dVolume.setWrapping(False)
 
         self.lEndTime.setText("")
         self.lStartTime.setText("")
         self.lPourcentVolume.setText("")
         self.dVolume.setValue(31)
 
-    def progressionDeplaced(self):
+    def progressionDeplace(self):
         self.mediaPlayer.setPosition(self.sProgression.value())
 
-    def progressionChanged(self):
+    def progressionChange(self):
         self.lEndTime.setText(convertMillis(self.mediaPlayer.duration()))
         self.lStartTime.setText(str(convertMillis(self.mediaPlayer.position())))
-        self.sProgression.setRange(0,self.mediaPlayer.duration())
+        self.sProgression.setRange(0, self.mediaPlayer.duration())
         self.sProgression.setValue(self.mediaPlayer.position())
 
-    def lectureClicked(self):
+    def lectureClic(self):
         mediaContent = QMediaContent(QUrl.fromLocalFile("big_buck_bunny.avi"))
         self.mediaPlayer.setMedia(mediaContent)
         self.mediaPlayer.play()
 
-    def pauseClicked(self):
+    def pauseClic(self):
         print("Pause")
         if self.mediaPlayer.state() == QMediaPlayer.PausedState:
             self.mediaPlayer.play()
         else:
             self.mediaPlayer.pause()
 
-    def stopClicked(self):
+    def stopClic(self):
         self.mediaPlayer.stop()
 
-    def suivantClicked(self):
+    def suivantClic(self):
         print("Suivant")
 
-    def precedentClicked(self):
+    def precedentClic(self):
         print("Précédent")
 
-    def volumeChanged(self):
+    def volumeChange(self):
         self.lPourcentVolume.setText(str(self.dVolume.value()))
         self.mediaPlayer.setVolume(self.dVolume.value())
 
