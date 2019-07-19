@@ -189,10 +189,20 @@ class Form(QMainWindow):
         self.mediaPlayer.stop()
 
     def suivantClic(self):
-        print("Suivant")
+        currentItemRow = self.listWidget.currentRow()
+        if currentItemRow == -1:
+            return
+        totalItems = self.listWidget.count()
+        self.listWidget.setCurrentRow((currentItemRow+1)%totalItems)
+        self.listeDoubleClic()
 
     def precedentClic(self):
-        print("Précédent")
+        currentItemRow = self.listWidget.currentRow()
+        if currentItemRow == -1:
+            return
+        totalItems = self.listWidget.count()
+        self.listWidget.setCurrentRow((currentItemRow - 1) % totalItems)
+        self.listeDoubleClic()
 
     def volumeChange(self):
         self.lPourcentVolume.setText(str(self.dVolume.value()))
