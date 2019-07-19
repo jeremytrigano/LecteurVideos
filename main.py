@@ -9,7 +9,7 @@
 # WARNING! All changes made in this file will be lost!
 
 import sys
-from PySide2.QtWidgets import (QApplication, QMainWindow, QFileDialog)
+from PySide2.QtWidgets import (QApplication, QMainWindow, QFileDialog, QListWidget, QListWidgetItem)
 from PySide2 import QtCore, QtWidgets
 from PySide2.QtMultimediaWidgets import QVideoWidget
 from PySide2.QtCore import QUrl
@@ -156,10 +156,9 @@ class Form(QMainWindow):
         self.sProgression.sliderMoved.connect(self.progressionDeplace)
         self.pbSuppr.clicked.connect(self.supprVid)
         self.pbAjout.clicked.connect(self.addVid)
+        self.listWidget.itemDoubleClicked.connect(self.listeDoubleClic)
 
         self.dVolume.setMaximum(100)
-        self.dVolume.setWrapping(False)
-
         self.lEndTime.setText("")
         self.lStartTime.setText("")
         self.lPourcentVolume.setText("")
@@ -199,6 +198,18 @@ class Form(QMainWindow):
         self.lPourcentVolume.setText(str(self.dVolume.value()))
         self.mediaPlayer.setVolume(self.dVolume.value())
 
+    def supprVid(self):
+        if self.listWidget.currentRow() != -1:
+            self.listWidget.takeItem(self.listWidget.currentRow())
+
+    def addVid(self):
+        self.openFile = QFileDialog.getOpenFileName(self, "Ouvrir...", ".", "Image Files (*.avi *.mp4)")
+        self.listWidget.addItem(self.openFile[0])
+
+    def listeDoubleClic(self):
+        self.mediaPlayer.setMedia(QMediaContent(QUrl.fromLocalFile(self.listWidget.currentItem().text())))
+        self.mediaPlayer.play()
+
     def retranslateUi(self, MainWindow):
         self.setWindowTitle(QtWidgets.QApplication.translate("MainWindow", "MainWindow", None, -1))
         self.lStartTime.setText(QtWidgets.QApplication.translate("MainWindow", "$start_time", None, -1))
@@ -213,16 +224,6 @@ class Form(QMainWindow):
         self.pbSuppr.setText(QtWidgets.QApplication.translate("MainWindow", "-", None, -1))
         self.label_4.setText(QtWidgets.QApplication.translate("MainWindow", "Volume :", None, -1))
         self.lPourcentVolume.setText(QtWidgets.QApplication.translate("MainWindow", "$volume", None, -1))
-
-    def supprVid(self):
-        self.listWidget.removeItemWidget(self.listWidget.selectedItems())
-        listWidgetItem = self.listWidget.selectedItems()
-        for item in listWidgetItem:
-            self.listWidget.takeItem(item)
-
-    def addVid(self):
-        self.openFile = QFileDialog.getOpenFileName(self, "Open Image", ".", "Image Files (*.avi)")
-        self.listWidget.addItem(self.openFile[0])
 
 
 if __name__ == '__main__':
